@@ -13,6 +13,18 @@
     },
     "frontend-e2e": {
       "tags": []
+    },
+    "components": {
+      "tags": []
+    },
+    "models": {
+      "tags": []
+    },
+    "services": {
+      "tags": []
+    },
+    "containers": {
+      "tags": []
     }
   }
 }

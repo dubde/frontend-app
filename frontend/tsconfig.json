@@ -15,7 +15,12 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@frontend/components": ["libs/components/src/index.ts"],
+      "@frontend/models": ["libs/models/src/index.ts"],
+      "@frontend/services": ["libs/services/src/index.ts"],
+      "@frontend/containers": ["libs/containers/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
