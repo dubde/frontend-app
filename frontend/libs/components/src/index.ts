@@ -1,1 +1,2 @@
-export * from './lib/components';
+export * from './lib/board';
+export * from './lib/tile';

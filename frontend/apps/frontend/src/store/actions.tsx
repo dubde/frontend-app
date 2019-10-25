@@ -1,5 +1,11 @@
 import { createAction } from 'redux-starter-kit';
-import { Routes, HighScore, Moves } from '@frontend/models';
+import {
+  Routes,
+  HighScore,
+  Moves,
+  MovesResponses,
+  Move
+} from '@frontend/models';
 
 const API = 'http://localhost:9999/api/games';
 
@@ -10,8 +16,10 @@ export enum ActionTypes {
   GetHighScores = '[API] Get High Scores',
   HighScoresLoaded = '[API] High Scores list received',
   CheckNextMoves = '[API] Check next three moves',
+  NextMovesResponseLoaded = '[API] Response for next three moves laoded',
   ApiError = '[API] Error',
 
+  SetMove = '[Game] Set next move coordinates',
   NavigateTo = '[Router] Navigate to page'
 }
 
@@ -47,7 +55,15 @@ const checkNextMoves = createAction(
   ActionTypes.CheckNextMoves,
   (moves: Moves) => ({
     payload: moves
-  }));
+  })
+);
+
+const nextMovesResponseLoaded = createAction(
+  ActionTypes.NextMovesResponseLoaded,
+  (responses: MovesResponses) => ({
+    payload: responses
+  })
+);
 
 const apiError = createAction(ActionTypes.ApiError, (message: string) => ({
   payload: message
@@ -57,6 +73,10 @@ export const navigateTo = createAction(
   ActionTypes.NavigateTo,
   (destRoute: Routes) => ({ payload: destRoute })
 );
+
+export const setMove = createAction(ActionTypes.SetMove, (move: Move) => ({
+  payload: move
+}));
 
 export function fetchHighScores() {
   return function(dispatch) {
@@ -80,7 +100,8 @@ export function fetchNewGame(userName: string) {
     })
       .then(response => response.json())
       .then(
-        ({ userName, gameId, tableBoard }) => dispatch(apiActions.tableInfoReceived(userName, gameId, tableBoard)),
+        ({ userName, gameId, tableBoard }) =>
+          dispatch(apiActions.tableInfoReceived(userName, gameId, tableBoard)),
         error => dispatch(apiActions.apiError(error))
       );
   };
@@ -104,14 +125,13 @@ export function fetchOldGame(userName, gameId) {
 export function fetchUserMoves(moves: Moves, gameId: string) {
   return function(dispatch) {
     dispatch(apiActions.checkNextMoves(moves));
-    return fetch(API + '/' + gameId + '/positions',
-    {
+    return fetch(API + '/' + gameId + '/positions', {
       method: 'POST',
       body: moves.toString()
     })
       .then(response => response.json())
       .then(
-        response => dispatch(apiActions.highScoresLoaded(response)),
+        response => dispatch(apiActions.nextMovesResponseLoaded(response)),
         error => dispatch(apiActions.apiError(error))
       );
   };
@@ -124,5 +144,6 @@ export const apiActions = {
   getHighScores,
   highScoresLoaded,
   checkNextMoves,
+  nextMovesResponseLoaded,
   apiError
 };

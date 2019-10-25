@@ -1,19 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-import { getLastGameAndUser } from '@frontend/services';
+import { Route } from '@frontend/models';
+
 import './start-page.css';
 
 /* eslint-disable-next-line */
 export interface StartPageProps {
   fetchNewGame;
   fetchOldGame;
-  navigateToScoreBoard;
+  navigateTo;
 }
 
 export const StartPage = (props: StartPageProps) => {
+  const [valueUserName, setUserNameState] = useState('');
+  const resumeGameId  = localStorage.getItem('gameToResume');
+  const userName  = localStorage.getItem('userToResume');
+  const onChange = event => setUserNameState(event.target.value);
 
-  let inputRef;
-  const { lastUser, lastGame } = getLastGameAndUser();
+  const resumeOldGame = (userName: string, resumeGameId: string) => {
+    props.fetchOldGame(userName, resumeGameId);
+    props.navigateTo(Route.GamePage);
+  };
+
+  const startNewGame = (userName: string) => {
+    props.fetchNewGame(userName);
+    props.navigateTo(Route.GamePage);
+  }
+
+  const goToScoreBoard = () => props.navigateTo(Route.ScorePage);
 
   return (
     <div className="StartPage">
@@ -21,21 +35,24 @@ export const StartPage = (props: StartPageProps) => {
       <div>
         <p>Set your username</p>
         <input
-          defaultValue={lastUser}
-          ref={input => (inputRef = input)}
+          value={valueUserName}
+          defaultValue={userName}
+          onChange={onChange}
         ></input>
-        <button onClick={props.fetchNewGame(inputRef.value)}>
+        <button onClick={() => startNewGame(valueUserName || userName)}>
           Start to play
         </button>
       </div>
-      { !!lastUser && !!lastGame ? (
+      {!!userName && !!resumeGameId ? (
         <div>
           <p>An open game is present do you want to restore it?</p>
-          <button onClick={props.fetchOldGame(lastUser, lastGame)}>Restore</button>
+          <button onClick={() => resumeOldGame(userName, resumeGameId)}>
+            Restore
+          </button>
         </div>
       ) : null}
       <div>
-        <button onClick={props.navigateToScoreBoard()}>ScoreBoard</button>
+        <button onClick={() => goToScoreBoard()}>ScoreBoard</button>
       </div>
     </div>
   );
