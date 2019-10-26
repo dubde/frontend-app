@@ -5,6 +5,7 @@ import { Provider } from 'react-redux'
 import App from './app/app';
 import { configureStore } from 'redux-starter-kit';
 import { reducer } from './store/reducers';
+import 'bootstrap/dist/css/bootstrap.css';
 
 const store = configureStore({
     reducer: reducer
