@@ -1,6 +1,6 @@
 # Frontend
 
-This project was generated using [Nx](https://nx.dev). 
+This project was generated using [Nx](https://nx.dev). PLease run `npm install` before trying to run/build/test the project.
 
 ## Development server
 

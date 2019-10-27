@@ -28,10 +28,10 @@ Details:
 - Creation of the game board (generated, hardcoded, loaded from file, etc.) won't be evaluated. 
 - No database is required on the backend (after backend restart state is lost). 
  
-## backend
+## Backend
 Server is written in Java using Spring.io framework. In the folder there are scripts for building and running the project. It can be run also from Eclipse directly executing the "Application.class". API will be serverd on "http://localhost:8080"
 
-## fronted
+## Fronted
 Frontend is written in React with Bootstrap 4 styles. Instruction on how to run, build and test are given in the subfolder's README.md file. 
 
  
