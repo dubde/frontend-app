@@ -13,9 +13,14 @@ public class Application {
 	private int remainingTreasures;
 	public Score[] scoreBoard = new Score[10];
 	
-	public void setGameSession(GameSession newGame) {
-		this.gameSession = newGame;
-		this.remainingTreasures = 3;
+	public String createGameSession(String userName) {
+		if(this.gameSession != null) {
+			if(this.gameSession.userName != userName) {
+				this.gameSession = new GameSession(userName);
+				this.remainingTreasures = 3;		
+			}
+		}
+		return Long.toString(this.gameSession.sessionId);
 	}
 	
 	public String[] checkPositions(int[][] positions) {

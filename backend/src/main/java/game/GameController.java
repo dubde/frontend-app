@@ -17,20 +17,13 @@ public class GameController {
 	}
 
 	@PostMapping(path="/api/games")
-	public GameSession createGameSession(@RequestParam(value="userName", defaultValue="null") String userName) {
-		GameSession newGame = new GameSession(userName);
-		this.gameApp.setGameSession(newGame);
-		return newGame;
+	public String createGameSession(@RequestParam(value="userName", defaultValue="null") String userName) {
+		return this.gameApp.createGameSession(userName);
 	}
 	
 	@GetMapping(path="/api/games")
 	public Score[] getScores() {
 		return this.gameApp.scoreBoard;
-	}
-	
-	@GetMapping(path="/api/games")
-	public GameSession restoreGameSession(@RequestParam(value="userName", defaultValue="null") String userName) {
-		return null;
 	}
 	
 	@PostMapping(path="/api/games/{id}/positions")
