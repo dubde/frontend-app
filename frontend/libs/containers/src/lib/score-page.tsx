@@ -13,18 +13,30 @@ export const ScorePage = (props: ScorePageProps) => {
 
 
   return (
-    <div>
-      <h1>High Scores</h1>
-      <ol>
-        {props.highScoresList.map((highScore: HighScore) => (
-          <li>
-            {highScore.userName} - {highScore.score}
-          </li>
-        ))}
-      </ol>
-      <p onClick={props.navigateToStart}>
-        <b>back to start page</b>
-      </p>
+    <div className="container">
+      <div className="col align-self-center">
+        <div className="row">
+          <h1 className="title">High Scores</h1>
+        </div>
+        <div className="row align-items-center">
+          <ol className="list-group">
+            {props.highScoresList.map((highScore: HighScore, index) => (
+              <li key={index} className="list-group-item">
+                {highScore.userName} - {highScore.score}
+              </li>
+            ))}
+          </ol>
+        </div>
+        <div className="row">
+          <button
+            type="button"
+            className="btn btn-link"
+            onClick={props.navigateToStart}
+          >
+            Back to start page
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

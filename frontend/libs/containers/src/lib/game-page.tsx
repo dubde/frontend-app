@@ -7,20 +7,26 @@ import { TileValue, Move } from '@frontend/models';
 /* eslint-disable-next-line */
 export interface GamePageProps {
   table: TileValue[][];
-  onMoveHandler: (move: Move) => any;
+  onMoveHandler: (move: Move) => void;
 }
 
 export const GamePage = (props: GamePageProps) => {
 
-
   return (
-    <div>
-      <h1>Welcome to game-page component!</h1>
-      <br/>
-      <Board 
-        board={props.table}
-        onTileClickHandler={props.onMoveHandler}
-      />
+    <div className="container">
+      <div className="row">
+        <div className="col align-self-center">
+          <h1>Game on!</h1>
+        </div>
+      </div>
+      <div className="row">
+        <div className="col align-self-center">
+            <Board 
+              board={props.table}
+              onTileClickHandler={props.onMoveHandler}
+            />
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,18 +1,25 @@
-import { createAction } from 'redux-starter-kit';
+import { createAction, Action } from 'redux-starter-kit';
+
+import { ThunkAction } from 'redux-thunk';
+
 import {
   Routes,
   HighScore,
   Moves,
   MovesResponses,
-  Move
+  Move,
+  TileValue
 } from '@frontend/models';
+import { State } from './reducers';
 
-const API = 'http://localhost:9999/api/games';
+const API = 'http://localhost:8080/api/games';
+
+export type AppThunk = ThunkAction<void, State, null, Action<string>>;
 
 export enum ActionTypes {
   CreateGame = '[API] Create new game for user',
-  RestoreGame = '[API] Restore current game for user',
-  TableInfoReceived = '[API] Current Table State received',
+  RestoreGame = '[API] Restore game',
+  GameInfoReceived = '[API] Current Game Id received',
   GetHighScores = '[API] Get High Scores',
   HighScoresLoaded = '[API] High Scores list received',
   CheckNextMoves = '[API] Check next three moves',
@@ -29,18 +36,19 @@ const createGame = createAction(ActionTypes.CreateGame, (userName: string) => ({
 
 const restoreGame = createAction(
   ActionTypes.RestoreGame,
-  (userName: string, gameId: string) => ({
+  (userName: string, gameId: string, tableConfiguration: TileValue[][]) => ({
     payload: {
       userName,
-      gameId
+      gameId,
+      tableConfiguration
     }
   })
 );
 
-const tableInfoReceived = createAction(
-  ActionTypes.TableInfoReceived,
-  (gameId: string, userName: string, tableBoard: string[][]) => ({
-    payload: { gameId, userName, tableBoard }
+const gameInfoReceived = createAction(
+  ActionTypes.GameInfoReceived,
+  (gameId: string) => ({
+    payload: { gameId }
   })
 );
 
@@ -65,8 +73,8 @@ const nextMovesResponseLoaded = createAction(
   })
 );
 
-const apiError = createAction(ActionTypes.ApiError, (message: string) => ({
-  payload: message
+const apiError = createAction(ActionTypes.ApiError, (message: string | any) => ({
+  payload: message + ''
 }));
 
 export const navigateTo = createAction(
@@ -78,7 +86,7 @@ export const setMove = createAction(ActionTypes.SetMove, (move: Move) => ({
   payload: move
 }));
 
-export function fetchHighScores() {
+export function fetchHighScores(): AppThunk {
   return function(dispatch) {
     dispatch(apiActions.getHighScores());
     return fetch(API, {
@@ -92,7 +100,7 @@ export function fetchHighScores() {
   };
 }
 
-export function fetchNewGame(userName: string) {
+export function fetchNewGame(userName: string): AppThunk {
   return function(dispatch) {
     dispatch(apiActions.createGame(userName));
     return fetch(API + '?userName=' + userName, {
@@ -100,34 +108,34 @@ export function fetchNewGame(userName: string) {
     })
       .then(response => response.json())
       .then(
-        ({ userName, gameId, tableBoard }) =>
-          dispatch(apiActions.tableInfoReceived(userName, gameId, tableBoard)),
+        ({ gameId }) =>
+          dispatch(apiActions.gameInfoReceived(gameId)),
         error => dispatch(apiActions.apiError(error))
       );
   };
 }
 
-export function fetchOldGame(userName, gameId) {
+export function restoreOldGame(userName, oldGameId, tableConfiguration: TileValue[][]): AppThunk {
   return function(dispatch) {
-    dispatch(apiActions.restoreGame(userName, gameId));
-    return fetch(API + '?userName=' + userName + '&gameId=' + gameId, {
-      method: 'GET'
+    return fetch(API + '?userName=' + userName, {
+      method: 'POST'
     })
       .then(response => response.json())
       .then(
-        ({ userName, gameId, tableBoard }) =>
-          dispatch(apiActions.tableInfoReceived(userName, gameId, tableBoard)),
+        ({ userName, gameId }) => oldGameId === gameId ? 
+          dispatch(apiActions.restoreGame(userName, gameId, tableConfiguration)) : 
+          dispatch(apiActions.gameInfoReceived(gameId)),
         error => dispatch(apiActions.apiError(error))
-      );
-  };
+      ); 
+  }
 }
 
-export function fetchUserMoves(moves: Moves, gameId: string) {
+export function fetchUserMoves(moves: Moves, gameId: string): AppThunk {
   return function(dispatch) {
     dispatch(apiActions.checkNextMoves(moves));
     return fetch(API + '/' + gameId + '/positions', {
       method: 'POST',
-      body: moves.toString()
+      body: moves.map((move: Move) => move.rowIndex + ',' + move.colIndex).join('|').toString()
     })
       .then(response => response.json())
       .then(
@@ -140,7 +148,7 @@ export function fetchUserMoves(moves: Moves, gameId: string) {
 export const apiActions = {
   createGame,
   restoreGame,
-  tableInfoReceived,
+  gameInfoReceived,
   getHighScores,
   highScoresLoaded,
   checkNextMoves,

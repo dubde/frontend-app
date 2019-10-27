@@ -10,15 +10,16 @@ export interface BoardProps {
 }
 
 export const Board = (props: BoardProps) => {
-  const nRows = props.board.length;;
+  const nRows = !!props.board ? props.board.length : 0;
 
-  const rows = new Array(nRows).map((row, rowIndex) => {
+  const rows = new Array(nRows).fill('').map((row, rowIndex) => {
 
     const nColumns = props.board[rowIndex].length;
 
-    return <tr>
-      {new Array(nColumns).map((col, colIndex) =>
+    return <tr key={rowIndex.toString()}>
+      {new Array(nColumns).fill('').map((col, colIndex) =>
         Tile({
+          id: (rowIndex * nRows + colIndex).toString(),
           value: props.board[rowIndex][colIndex],
           onClickHandler: () =>
             props.onTileClickHandler({
@@ -31,9 +32,9 @@ export const Board = (props: BoardProps) => {
   });
 
   return (
-    <div>
-      <table>{rows}</table>
-    </div>
+    <table className="table table-bordered table-primary">
+      <tbody>{rows}</tbody>
+    </table>
   );
 };
 

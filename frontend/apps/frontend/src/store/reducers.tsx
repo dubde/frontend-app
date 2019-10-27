@@ -38,7 +38,7 @@ export const reducer = createReducer(initialState, {
   [ActionTypes.CreateGame]: (state, action) => handleCreateGame(state, action),
   [ActionTypes.RestoreGame]: (state, action) =>
     handleRestoreGame(state, action),
-  [ActionTypes.TableInfoReceived]: (state, action) =>
+  [ActionTypes.GameInfoReceived]: (state, action) =>
     handleTableInfoReceived(state, action),
   [ActionTypes.SetMove]: (state, action) => handleSetMove(state, action),
   [ActionTypes.CheckNextMoves]: (state, action) =>
@@ -75,7 +75,7 @@ function handleRestoreGame(state: State, action): State {
 function handleTableInfoReceived(state: State, action): State {
   return {
     ...state,
-    tableBoard: action.payload.tableBoard,
+    tableBoard: createTable(),
     gameId: action.payload.gameId,
     isLoading: false,
     loaded: true
@@ -94,7 +94,7 @@ function handleCheckNextMoves(state: State, action): State {
 
 function handleNextMovesResponse(state: State, action): State {
   const updatedBoard = state.tableBoard;
-  const responses: MovesResponses = action.payload;
+  const responses: MovesResponses = action.payload || [];
 
   responses.forEach(
     (move: MoveResponse) =>
@@ -149,4 +149,9 @@ function handleNavigateTo(state: State, action): State {
     ...state,
     currentScreen: action.payload
   };
+}
+
+function createTable(): TileValue[][] {
+  const table: TileValue[][] = new Array(5).fill(0).map(() => new Array(5).fill(''));
+  return table;
 }

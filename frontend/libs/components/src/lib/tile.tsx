@@ -4,6 +4,7 @@ import './tile.css';
 import { TileValue } from '@frontend/models';
 
 export interface TileProps {
+  id: string;
   value: TileValue;
   onClickHandler;
 }
@@ -14,7 +15,7 @@ export const Tile = (props: TileProps) => {
 
   useEffect(() => setState(props.value),[props.value])
 
-  return <td onClick={!tileValue ? props.onClickHandler : undefined }>{tileValue}</td>;
+  return <td key={props.id} onClick={!tileValue ? props.onClickHandler : undefined }>{tileValue}</td>;
 };
 
 export default Tile;

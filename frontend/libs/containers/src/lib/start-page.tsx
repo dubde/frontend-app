@@ -1,56 +1,62 @@
 import React, { useState } from 'react';
 
-import { Route } from '@frontend/models';
+import { Route, TileValue } from '@frontend/models';
 
 import './start-page.css';
 
 /* eslint-disable-next-line */
 export interface StartPageProps {
-  fetchNewGame;
-  fetchOldGame;
-  navigateTo;
+  fetchNewGame: (userName: string) => void;
+  restoreOldGame: (
+    userName: string,
+    gameId: string,
+    tableState: TileValue[][]
+  ) => void;
+  navigateTo: (route: Route) => void;
 }
 
 export const StartPage = (props: StartPageProps) => {
-  const [valueUserName, setUserNameState] = useState(null);
+  const [valueUserName, setUserNameState] = useState('');
   const resumeGameId = localStorage.getItem('gameToResume');
   const userName = localStorage.getItem('userToResume');
+  const resumeGameState = fromStringToMatrix(localStorage.getItem('gameState'));
+
   const onChange = event => setUserNameState(event.target.value);
 
-  const resumeOldGame = (userName: string, resumeGameId: string) => {
-    props.fetchOldGame(userName, resumeGameId);
-    props.navigateTo(Route.GamePage);
-  };
-
   const startNewGame = (userName: string) => {
-    console.log(userName);
     props.fetchNewGame(userName);
     props.navigateTo(Route.GamePage);
   };
 
+  const restoreOldGame = () => {
+    props.restoreOldGame(userName, resumeGameId, resumeGameState);
+    props.navigateTo(Route.GamePage);
+  };
+
   const goToScoreBoard = () => props.navigateTo(Route.ScorePage);
+  const userInputValue = () => valueUserName || userName || '';
 
   return (
     <div className="container">
       <div className="row">
-        <div className="col-lg-12">
+        <div className="col align-self-center">
           <h2>Welcome to the game</h2>
         </div>
       </div>
       <div className="row">
-        <div className="col-lg-4 form-group">
+        <div className="col align-self-center form-group">
           <label htmlFor="usr">Set your username</label>
           <input
             id="usr"
             type="text"
             className="input-sm form-control"
-            value={valueUserName || userName}
+            value={userInputValue()}
             onChange={onChange}
           ></input>
         </div>
       </div>
       <div className="row">
-        <div className="col-lg-4">
+        <div className="col align-self-center">
           <button
             type="button"
             className="btn btn-primary"
@@ -62,12 +68,12 @@ export const StartPage = (props: StartPageProps) => {
       </div>
       {!!userName && !!resumeGameId ? (
         <div className="row">
-          <div className="col-lg-8">
+          <div className="col align-self-center">
             <label>An open game is present do you want to restore it?</label>
             <button
               type="button"
               className="btn btn-warning"
-              onClick={() => resumeOldGame(userName, resumeGameId)}
+              onClick={() => startNewGame(userName)}
             >
               Restore
             </button>
@@ -75,16 +81,27 @@ export const StartPage = (props: StartPageProps) => {
         </div>
       ) : null}
       <div className="row">
-        <button
-          type="button"
-          className="btn btn-link"
-          onClick={() => goToScoreBoard()}
-        >
-          ScoreBoard
-        </button>
+        <div className="col align-self-center">
+          <button
+            type="button"
+            className="btn btn-link"
+            onClick={() => goToScoreBoard()}
+          >
+            ScoreBoard
+          </button>
+        </div>
       </div>
     </div>
   );
 };
+
+function fromStringToMatrix(tableString: string): TileValue[][] {
+  const matrix = !!tableString ? tableString
+    .split('|')
+    .map((subArray: string) =>
+      subArray.split(',').map(tileValue => tileValue as TileValue)
+    ) : [[]];
+  return matrix;
+}
 
 export default StartPage;
