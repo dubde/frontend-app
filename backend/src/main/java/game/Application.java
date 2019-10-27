@@ -15,11 +15,12 @@ public class Application {
 	
 	public String createGameSession(String userName) {
 		if(this.gameSession != null) {
-			if(this.gameSession.userName != userName) {
-				this.gameSession = new GameSession(userName);
-				this.remainingTreasures = 3;		
+			if(this.gameSession.userName == userName) {
+				return Long.toString(this.gameSession.sessionId);
 			}
 		}
+		this.gameSession = new GameSession(userName);
+		this.remainingTreasures = 3;		
 		return Long.toString(this.gameSession.sessionId);
 	}
 	
