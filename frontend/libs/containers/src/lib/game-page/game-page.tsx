@@ -1,10 +1,8 @@
 import React from 'react';
 
-import './game-page.css';
 import { Board } from '@frontend/components';
 import { TileValue, Move } from '@frontend/models';
 
-/* eslint-disable-next-line */
 export interface GamePageProps {
   table: TileValue[][];
   onMoveHandler: (move: Move) => void;

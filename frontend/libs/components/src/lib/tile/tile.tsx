@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-import './tile.css';
 import { TileValue } from '@frontend/models';
 
 export interface TileProps {

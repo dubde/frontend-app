@@ -1,7 +1,6 @@
 import React from 'react';
 
-import './board.css';
-import Tile from './tile';
+import Tile from '../tile/tile';
 import { TileValue, Move } from '@frontend/models';
 
 export interface BoardProps {

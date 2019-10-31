@@ -1,2 +1,2 @@
-export * from './lib/board';
-export * from './lib/tile';
+export * from './lib/board/board';
+export * from './lib/tile/tile';

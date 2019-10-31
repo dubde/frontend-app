@@ -2,9 +2,6 @@ import React, { useState } from 'react';
 
 import { Route, TileValue } from '@frontend/models';
 
-import './start-page.css';
-
-/* eslint-disable-next-line */
 export interface StartPageProps {
   fetchNewGame: (userName: string) => void;
   restoreOldGame: (
